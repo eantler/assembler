@@ -6,10 +6,11 @@
  */
 
 
+#include "LinkedList.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "linkedList.h"
 
 #define DEBUG 0
 #define debug_print(fmt, ...) \
@@ -17,18 +18,6 @@
                                 __LINE__, __func__, ##__VA_ARGS__ ); \
 		} while (0)
 
-
-//typedef struct Node {
-//	char * key;
-//	void * data;
-//	struct node * next;
-//} Node;
-//
-//typedef struct {
-//	Node *first_node;
-//	Node *last_node;
-//	int length;
-//} LinkedList;
 
 LinkedList *create_linked_list() {
 
@@ -76,10 +65,11 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size) 
 	Node * new_node;
 	size_t key_length;
 
+	key_length = strlen(key);
 	if (key_length > KEY_MAX_LENGTH) {
 		// key is too long
 		debug_print("Key is too long ! key provided: \n%s\n",key);
-		fprintf(stderr, "Provided with a key of length %d when the max size is %d.\n",key_length,KEY_MAX_LENGTH);
+		fprintf(stderr, "Provided with a key of length %zd when the max size is %d.\n",key_length,KEY_MAX_LENGTH);
 	}
 
 	debug_print("Setting key %s:\n",key);
@@ -89,7 +79,8 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size) 
 		memcpy(exists_data, data, data_size);
 	} else {
 		debug_print("Key %s does not exists. Allocating memory for a new node.\n");
-		key_length = strlen(key);
+
+
 		new_node = (Node *) malloc(sizeof(Node));
 		new_node->data = (void *) malloc(data_size);
 		new_node->key = (char *) malloc((sizeof(char)*key_length)+1);

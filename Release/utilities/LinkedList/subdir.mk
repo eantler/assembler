@@ -4,17 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../utilities/stringHashTable.c 
+../utilities/LinkedList/LinkedList.c \
+../utilities/LinkedList/linkedListTester.c 
 
 OBJS += \
-./utilities/stringHashTable.o 
+./utilities/LinkedList/LinkedList.o \
+./utilities/LinkedList/linkedListTester.o 
 
 C_DEPS += \
-./utilities/stringHashTable.d 
+./utilities/LinkedList/LinkedList.d \
+./utilities/LinkedList/linkedListTester.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-utilities/%.o: ../utilities/%.c
+utilities/LinkedList/%.o: ../utilities/LinkedList/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"

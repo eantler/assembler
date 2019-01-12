@@ -1,9 +1,9 @@
-#include "linkedList.h"
 #include "linkedListTester.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "LinkedList.h"
 
 #define info_print(fmt, ...) \
         do { fprintf(stdout, " %s:%d:%s() [INFO]: " fmt, __FILE__, \
