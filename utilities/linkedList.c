@@ -11,7 +11,7 @@
 #include <string.h>
 #include "linkedList.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define debug_print(fmt, ...) \
         do { if (DEBUG) fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, \
                                 __LINE__, __func__, ##__VA_ARGS__ ); \
@@ -53,7 +53,7 @@ void _linked_list_destroy_node(Node * node) {
 	free(node); // frees the node
 }
 
-void destory_linked_list(LinkedList * ls) {
+void destroy_linked_list(LinkedList * ls) {
 	/* iterating over the list freeing any unfree'd nodes */
 	Node * next_node;
 	Node * current_node;
@@ -75,6 +75,12 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size) 
 	void * exists_data;
 	Node * new_node;
 	size_t key_length;
+
+	if (key_length > KEY_MAX_LENGTH) {
+		// key is too long
+		debug_print("Key is too long ! key provided: \n%s\n",key);
+		fprintf(stderr, "Provided with a key of length %d when the max size is %d.\n",key_length,KEY_MAX_LENGTH);
+	}
 
 	debug_print("Setting key %s:\n",key);
 	exists_data = linked_list_get(ls,key);
@@ -116,5 +122,26 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size) 
 
 
 void * linked_list_get(LinkedList * ls, char * key) {
- return NULL;
+	Node * current_node;
+	debug_print("Trying to find key %s.\n",key);
+
+	if (ls->first_node == NULL || ls->length==0) {
+				//list is empty
+		debug_print("List is empty, returning NULL.\n");
+		return NULL;
+	}
+
+	current_node = ls->first_node;
+	debug_print("Iterating through the list\n");
+	while (current_node!=NULL) {
+		debug_print("Comparing to key: %s\n",current_node->key);
+		if (strcmp(key,current_node->key)==0) {
+			debug_print("Key is found, returning.\n");
+			return current_node->data;
+		} else {
+			current_node = current_node->next;
+		}
+	}
+	debug_print("Reached end of the list, returning NULL.\n");
+	return NULL;
 }
