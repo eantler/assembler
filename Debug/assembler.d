@@ -1,0 +1,1 @@
+assembler.d: ../assembler.c
