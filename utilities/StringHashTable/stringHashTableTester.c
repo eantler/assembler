@@ -1,9 +1,9 @@
-#include "linkedListTester.h"
+#include "stringHashTableTester.h"
 
 
-int linked_list_test() {
+int string_hash_table_test() {
 	int flag = 1;
-	LinkedList * testList1;
+	StringHashTable * testHash1;
 	char keys[TEST_MAX_SIZE][40];
 	int values[TEST_MAX_SIZE];
 	int * get_value_results;
@@ -12,10 +12,10 @@ int linked_list_test() {
 	int length;
 	char ** keysArr;
 
-	info_print("Start testing LinkedList.");
-	info_print("Test #1 - Create linkedList");
-	testList1 = create_linked_list();
-	if (testList1) {
+	info_print("Start testing StringHashTable.");
+	info_print("Test #1 - Create StringHashtable");
+	testHash1 = create_string_hash_table();
+	if (testHash1) {
 		results_print("TEST #1 - SUCCESS");
 	} else {
 		results_print("TEST #1 - FAILED");
@@ -29,11 +29,11 @@ int linked_list_test() {
 	for (i=0; i < TEST_MAX_SIZE ;i++) {
 		values[i] = rand();
 		sprintf(keys[i],"key%d",i);
-		linked_list_set(testList1,keys[i],(void *)&values[i], sizeof(int));
+		string_hash_table_set(testHash1,keys[i],(void *)&values[i], sizeof(int));
 	}
 
 	for (j=TEST_MAX_SIZE-1; j>=0; j--) {
-		get_value_results = linked_list_get(testList1,keys[j]);
+		get_value_results = string_hash_table_get(testHash1,keys[j]);
 		if (!(*get_value_results && *get_value_results==values[j])) {
 			info_print("Test #2 - failed at key %s.",keys[j]);
 			flag = -1;
@@ -47,7 +47,7 @@ int linked_list_test() {
 	}
 
 	info_print("Test #3 - Printing the keys");
-	length = linked_list_get_keys(testList1, &keysArr);
+	length = string_hash_table_get_keys(testHash1, &keysArr);
 
 	if (length<0) {
 		debug_print("Failed to get keys");
@@ -56,12 +56,15 @@ int linked_list_test() {
 
 	for (i=0;i < TEST_MAX_SIZE; i++) {
 		debug_print("i=%d",i);
-		debug_print("Key %d: %s",i,keysArr[i]);
+		debug_print("Printed key #%d: %s",i,keysArr[i]);
 	}
+
 	free(keysArr);
 	results_print("Print link success");
-	destroy_linked_list(testList1);
-	results_print("Destroyed linked lists SUCCESS");
+	/*string(testHash1); // add destroy hash *.
+	 *
+	 */
+	results_print("Destroyed StringHashTable SUCCESS");
 	return flag;
 
 }

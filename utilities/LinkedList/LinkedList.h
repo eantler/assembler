@@ -24,7 +24,7 @@ typedef struct Node {
 	struct Node * next;
 } Node;
 
-typedef struct {
+typedef struct LinkedList {
 	Node *first_node;
 	Node *last_node;
 	int length;
@@ -85,6 +85,16 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size);
 
 void * linked_list_get(LinkedList * ls, char * key);
 
+/*
+ * int linked_list_get_keys(LinkedList * ls, char ** keys);
+ *
+ * Function set keys to point to an array of keys available.
+ *
+ * @params
+ * ls - LinkedList instance
+ * keys - pointer to keys array that the function will update
+ */
 
+int linked_list_get_keys(LinkedList * ls, char *** keys);
 
 #endif /* LINKEDLIST_H_ */

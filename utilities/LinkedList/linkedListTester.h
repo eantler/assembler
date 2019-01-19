@@ -8,7 +8,12 @@
 #ifndef LINKEDLISTTESTER_H_
 #define LINKEDLISTTESTER_H_
 
-#define TEST_MAX_SIZE 100 // Maximum amount of nodes to test
+#define TEST_MAX_SIZE 100 /* Maximum amount of nodes to test */
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "LinkedList.h"
+#include "../utils.h"
 
 /*
  * int linked_list_test

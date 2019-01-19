@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../utilities/stringHashTable.c 
+../utilities/utils.c 
 
 OBJS += \
-./utilities/stringHashTable.o 
+./utilities/utils.o 
 
 C_DEPS += \
-./utilities/stringHashTable.d 
+./utilities/utils.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

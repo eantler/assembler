@@ -8,6 +8,7 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include utilities/StringHashTable/subdir.mk
 -include utilities/LinkedList/subdir.mk
 -include utilities/subdir.mk
 -include symbolsTable/subdir.mk

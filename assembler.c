@@ -14,13 +14,16 @@
 
  #include <stdio.h>
  #include "utilities/LinkedList/linkedListTester.h"
-#define DEBUG 1
-
+ #include "utilities/StringHashTable/stringHashTableTester.h"
 
  int main () {
 
  	printf("Hello world!\n");
- 	linked_list_test();
+ 	if (TEST) {
+ 	 	linked_list_test();
+ 	 	string_hash_table_test();
+ 	}
+
 
  return 1;
 
