@@ -15,6 +15,7 @@
  #include <stdio.h>
  #include "utilities/LinkedList/linkedListTester.h"
  #include "utilities/StringHashTable/stringHashTableTester.h"
+ #include "symbolsTable/symbolsTableTester.h"
 
  int main () {
 
@@ -22,6 +23,7 @@
  	if (TEST) {
  	 	linked_list_test();
  	 	string_hash_table_test();
+ 	 	symbols_table_test();
  	}
 
 

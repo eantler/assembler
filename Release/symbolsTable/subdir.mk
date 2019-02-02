@@ -4,13 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../symbolsTable/symbolsTable.c 
+../symbolsTable/symbolsTable.c \
+../symbolsTable/symbolsTableTester.c 
 
 OBJS += \
-./symbolsTable/symbolsTable.o 
+./symbolsTable/symbolsTable.o \
+./symbolsTable/symbolsTableTester.o 
 
 C_DEPS += \
-./symbolsTable/symbolsTable.d 
+./symbolsTable/symbolsTable.d \
+./symbolsTable/symbolsTableTester.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

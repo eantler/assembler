@@ -7,23 +7,6 @@
 
 
 #include "symbolsTable.h"
-/*
-typedef struct {
-	char * label;
-	int value;
-	int isExtern;
-	int isEntry;
-} Symbol;
-
-
-typedef struct {
-	StringHashTable hashTable;
-	int length;
-	int lengthExternals;
-	int LengthEntries;
-} SymbolTable;
-
-*/
 
 SymbolTable * create_symbols_table() {
 	debug_print("Starting to create a symbols table");
@@ -50,74 +33,61 @@ void destroy_symbols_table(SymbolTable * st) {
 	free(st);
 }
 
-Symbol create_symbol();
-
-/*
- * int symbols_table_declare_external(SymbolTable * st, char * label)
- *
- * Function declares an external symbol
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol to be declared
- *
- * @returns
- * 1 if successful, else 0
- */
-int symbols_table_declare_external(SymbolTable * st, char * label) {
-	return 0;
-}
-
-/*
- * int symbols_table_declare_entry(SymbolTable * st, char * label)
- *
- * Function declares an entry symbol
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol to be declared
- *
- * @returns
- * 1 if successful, else 0
- */
-int symbols_table_declare_entry(SymbolTable * st, char * label) {
-	return 0;
-}
-
-/*
- * int symbols_table_set_symbol(SymbolTable * st, char * label, int value)
- *
- * Function sets a single symbol by some value
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol label
- * value - value to be stored
- *
- * @returns
- * pointer to symbol if successful else NULL
- *
- */
-Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value){
-	return NULL;
-}
-
-/*
- * Symbol * symbols_table_get_symbol(SymbolTable * st, char * label)
- *
- * Function gets a singly symbol by some value
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol label
- *
- * @returns
- * pointer to the Symbol if successful else NULL;
- *
- */
 Symbol * symbols_table_get_symbol(SymbolTable * st, char * label){
+	Symbol * existingSymbol;
+	existingSymbol = (Symbol *) string_hash_table_get(st->hashTable,label);
+	if (existingSymbol) return  existingSymbol;
+
 	return NULL;
 };
+
+
+Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern){
+	Symbol * existingSymbol;
+	Symbol newSymbol;
+	int setResult;
+
+	if (isEntry > 1 || isEntry < -1) {
+		debug_print("Error: isEntry of invalid value for symbol %s", label);
+		return NULL;
+	}
+
+	if (isExtern > 1 || isExtern < -1) {
+		debug_print("Error: isExtern of invalid value for symbol %s", label);
+			return NULL;
+	}
+
+	if (value < -1 ) {
+		debug_print("Error: value parameter of invalid value for symbol %s", label);
+		return NULL;
+	}
+	existingSymbol = symbols_table_get_symbol(st,label);
+	if (existingSymbol) {
+		existingSymbol->value = value == -1 ? existingSymbol->value : value;
+		existingSymbol->isEntry = isEntry == -1 ? existingSymbol->isEntry : isEntry;
+		existingSymbol->isExtern = isExtern == -1 ? existingSymbol->isExtern : isExtern;
+		if (existingSymbol->isEntry==1 && isEntry==1) st->lengthEntries++;
+		if (existingSymbol->isExtern==1 && isExtern==1) st->lengthExternals++;
+		return existingSymbol;
+	} else {
+		newSymbol.isEntry = isEntry == -1 ? 0 : isEntry;
+		newSymbol.isExtern = isExtern == -1 ? 0 : isExtern;
+		newSymbol.value = value == -1 ? 0 : value;
+		newSymbol.label = label;
+		setResult = string_hash_table_set(st->hashTable,label,&newSymbol,sizeof(newSymbol));
+
+		if (setResult) {
+			st->length++;
+			if (isEntry==1) st->lengthEntries++;
+			if (isExtern==1) st->lengthExternals++;
+			return string_hash_table_get(st->hashTable,label);
+		}
+	}
+	return NULL;
+}
+
+
+
 
 /*
  * int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol ** array)
@@ -126,13 +96,55 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label){
  *
  * @params
  * st - symbol table
- * array - pointer to an array that will be changed to hold the array of symbols
+ * array - pointer to an array pointer that will be changed to hold the array of symbols (need to be fried)
  *
  * @return
  * count of number of symbols in array, if allocation error than -1
  */
-int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol ** array) {
-	return 0;
+int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol *** array, int entriesOnly, int externalsOnly ) {
+	Symbol ** newArray;
+	char ** keysArray;
+	int hashResValue;
+	int allocationLength;
+	int i;
+
+	if (entriesOnly == 1 && externalsOnly==1) {
+		allocationLength = (st->lengthEntries > st->lengthExternals ? st->lengthEntries : st->lengthExternals);
+	} else if (entriesOnly == 1) {
+		allocationLength = st->lengthEntries;
+	} else if (externalsOnly == 1) {
+		allocationLength = st->lengthExternals;
+	} else {
+		allocationLength = st->length;
+	}
+
+	newArray = (Symbol **) malloc(sizeof(Symbol *)*allocationLength);
+	keysArray = (char **) malloc(sizeof(char *)*allocationLength);
+
+	if (newArray == NULL || keysArray == NULL) {
+		debug_print("Memory allocation for returned symbols array failed.");
+		return -1;
+	}
+
+
+	hashResValue = string_hash_table_get_keys(st->hashTable, &keysArray);
+	if (hashResValue<0) {
+		debug_print("Something went wrong while reading keys from hash table");
+		return -1;
+	}
+
+	for (i=0; i < allocationLength; i++) {
+		newArray[i] = (Symbol *) string_hash_table_get(st->hashTable,keysArray[i]);
+		if (newArray[i] == NULL) {
+			debug_print("Something went wrong while trying to read key: %s",keysArray[i]);
+			free(newArray);
+			free(keysArray);
+			return -1;
+		}
+	}
+	*array = newArray;
+	free(keysArray);
+	return allocationLength;
 }
 
 

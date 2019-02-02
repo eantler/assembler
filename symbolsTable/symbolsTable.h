@@ -76,20 +76,21 @@ int symbols_table_declare_external(SymbolTable * st, char * label);
 int symbols_table_declare_entry(SymbolTable * st, char * label);
 
 /*
- * int symbols_table_set_symbol(SymbolTable * st, char * label, int value)
+ * int symbols_table_set_symbol(SymbolTable * st, char * label, int value,int isEntry, int isExtern)
  *
  * Function sets a single symbol by some value
  *
  * @params
  * st - SymbolTable instance
  * label - the symbol label
- * value - value to be stored
+ * value - value to be stored (-1 if stay with existing)
+ * isEntry/isExtern - o or 1 to set a value, -1 to stay with existing
  *
  * @returns
  * pointer to symbol if successful else NULL
  *
  */
-Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value);
+Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern);
 
 /*
  * Symbol * symbols_table_get_symbol(SymbolTable * st, char * label)
@@ -113,12 +114,14 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label);
  *
  * @params
  * st - symbol table
- * array - pointer to an array that will be changed to hold the array of symbols
+ * array - pointer to an array that will be changed to hold the array of symbols (need to be fried)
+ * entriesOnly/externalsOnly - equals 1 if need to retrieve only entries/externals
  *
  * @return
  * count of number of symbols in array, if allocation error than -1
  */
-int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol ** array);
+
+int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol *** array, int entriesOnly, int externalsOnly);
 
 
 #endif /* SYMBOLSTABLE_H_ */
