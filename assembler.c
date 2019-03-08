@@ -28,12 +28,16 @@ int main() {
 		/*symbols_table_test();*/
 		info_print("***************** End testing ***********");
 	}
-	char testText[] = "  	test: 			   			bne   	 3   			, @r4  		\n";
-	char emptyText[] = "		 ";
-	tokenizeLine(testText);
+	int i;
+	char testText[] = "  	test: 			   			.string   	 \"Hola\"   			\n";
+	char emptyText[] = "		 \n";
+	Sentence * s;
+	s = tokenizeLine(testText);
+	if (s != NULL) debug_print("s type: %d,",s->type);
+			else debug_print("s is null");
 	tokenizeLine(emptyText);
 	Test test[] = {{"hello",3},{"hey",2}};
-	for (int i = 0; i<2; i++)
+	for (i = 0; i<2; i++)
 	info_print("Test string = %s and int = %d",test[i].a,test[i].b);
 	return 1;
 

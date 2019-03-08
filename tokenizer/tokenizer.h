@@ -16,7 +16,7 @@
 
 /* Restrictions */
 #define MAX_LINE_SIZE 80
-#define MAX_LABEL_SIZE 30
+#define MAX_LABEL_SIZE 31
 #define DELIMS " :,\r\t\n"
 #define MAX_TOKENS_PER_LINE 100
 #define MAX_TOKEN_SIZE 80
@@ -32,7 +32,7 @@ typedef struct {
 
 typedef struct {
 	enum OperandType type;
-	char *label;
+	char * label;
 	int value;
 } Operand;
 
@@ -50,7 +50,7 @@ typedef struct {
 	char * label;
 	enum CommandType commandType;
 	int operandsCount;
-	Operand operands[];
+	Operand ** operands;
 } Sentence;
 
 /*
@@ -69,5 +69,34 @@ Sentence * tokenizeLine(char * line);
  * Used to destoroy sentences.
  */
 void destorySentence(Sentence * sentance);
+
+/*
+ * INTERNAL HELPING FUNCTIONS
+ */
+
+/* helping function
+ * skip blanks move the pointer after blank spaces. Sets pointer to null if line is empty
+*/
+void skipBlanks(char ** ptr);
+
+/* helping function that looks for the separator between tokens.
+ * if more than 1 separator then prints an error and return '\0'
+ */
+char getSeparator(char * string, int startOffSet, int endOffSet);
+
+/* helping function that frees a list of tokens */
+void freeTokens(Token ** list, int length);
+
+/* helping function that returns sentence type from token */
+enum SentenceType inferSentenceTypeFromToken(char * token);
+
+/* helping function that returns command type from token */
+enum CommandType inferCommandTypeFromToken(char * token);
+
+/* helping function that checks if a token is a valid label */
+int isValidLabel(char * token);
+
+/* helping function that checks if we look at valid strings */
+int isValidString(char * line, int start, int end);
 
 #endif /* TOKENIZER_H_ */

@@ -50,11 +50,12 @@ void results_print(const char* format, ...) {
 }
 
 char *rand_string(char *str, size_t size) {
+	size_t n;
 	/* this test function is taken from https://codereview.stackexchange.com/questions/29198/random-string-generator-in-c */
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJK...";
     if (size) {
         --size;
-        for (size_t n = 0; n < size; n++) {
+        for (n = 0; n < size; n++) {
             int key = rand() % (int) (sizeof charset - 1);
             str[n] = charset[key];
         }

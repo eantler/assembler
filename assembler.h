@@ -13,6 +13,6 @@
  #include "utilities/LinkedList/linkedListTester.h"
  #include "utilities/StringHashTable/stringHashTableTester.h"
  #include "symbolsTable/symbolsTableTester.h"
- #include "tokenizer/tokenizer.h";
+ #include "tokenizer/tokenizer.h"
 
 #endif /* ASSEMBLER_H_ */
