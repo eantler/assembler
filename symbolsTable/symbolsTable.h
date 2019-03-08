@@ -39,6 +39,7 @@ typedef struct SymbolTable {
  */
 SymbolTable * create_symbols_table();
 
+
 /*
  * void destroy_symbols_table()
  *
@@ -47,33 +48,6 @@ SymbolTable * create_symbols_table();
  */
 void destroy_symbols_table(SymbolTable * st);
 
-/*
- * int symbols_table_declare_external(SymbolTable * st, char * label)
- *
- * Function declares an external symbol
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol to be declared
- *
- * @returns
- * 1 if successful, else 0
- */
-int symbols_table_declare_external(SymbolTable * st, char * label);
-
-/*
- * int symbols_table_declare_entry(SymbolTable * st, char * label)
- *
- * Function declares an entry symbol
- *
- * @params
- * st - SymbolTable instance
- * label - the symbol to be declared
- *
- * @returns
- * 1 if successful, else 0
- */
-int symbols_table_declare_entry(SymbolTable * st, char * label);
 
 /*
  * int symbols_table_set_symbol(SymbolTable * st, char * label, int value,int isEntry, int isExtern)
@@ -121,7 +95,7 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label);
  * count of number of symbols in array, if allocation error than -1
  */
 
-int symbols_table_get_symbols(SymbolTable * st, char * label, Symbol *** array, int entriesOnly, int externalsOnly);
+int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnly, int externalsOnly);
 
 
 #endif /* SYMBOLSTABLE_H_ */

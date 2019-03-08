@@ -61,9 +61,7 @@ int string_hash_table_test() {
 
 	free(keysArr);
 	results_print("Print link success");
-	/*string(testHash1); // add destroy hash *.
-	 *
-	 */
+	destroy_string_hash_table(testHash1);
 	results_print("Destroyed StringHashTable SUCCESS");
 	return flag;
 

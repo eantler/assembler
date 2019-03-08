@@ -26,4 +26,6 @@ void info_print(const char* format, ...);
 
 void results_print(const char* format, ...);
 
+char *rand_string(char *str, size_t size);
+
 #endif /* UTILS_H_ */

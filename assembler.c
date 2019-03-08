@@ -1,4 +1,3 @@
-
 /*
  * assember.c
  *
@@ -11,22 +10,31 @@
  *
  */
 
+#include "assembler.h"
 
- #include <stdio.h>
- #include "utilities/LinkedList/linkedListTester.h"
- #include "utilities/StringHashTable/stringHashTableTester.h"
- #include "symbolsTable/symbolsTableTester.h"
+typedef struct {
+	char * a;
+	int b;
+} Test;
 
- int main () {
+int main() {
 
- 	printf("Hello world!\n");
- 	if (TEST) {
- 	 	linked_list_test();
- 	 	string_hash_table_test();
- 	 	symbols_table_test();
- 	}
+	printf("Hello world!\n");
+	debug_print("DONEEEE#@(&$#HKJLHFD");
+	if (TEST) {
+		info_print("***************** Starting testing ***********");
+		linked_list_test();
+		string_hash_table_test();
+		/*symbols_table_test();*/
+		info_print("***************** End testing ***********");
+	}
+	char testText[] = "  	test: 			   			bne   	 3   			, @r4  		\n";
+	char emptyText[] = "		 ";
+	tokenizeLine(testText);
+	tokenizeLine(emptyText);
+	Test test[] = {{"hello",3},{"hey",2}};
+	for (int i = 0; i<2; i++)
+	info_print("Test string = %s and int = %d",test[i].a,test[i].b);
+	return 1;
 
-
- return 1;
-
- }
+}

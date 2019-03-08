@@ -16,6 +16,7 @@ SUBDIRS := \
 utilities \
 utilities/StringHashTable \
 utilities/LinkedList \
+tokenizer \
 symbolsTable \
 . \
 

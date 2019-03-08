@@ -11,6 +11,7 @@ RM := rm -rf
 -include utilities/StringHashTable/subdir.mk
 -include utilities/LinkedList/subdir.mk
 -include utilities/subdir.mk
+-include tokenizer/subdir.mk
 -include symbolsTable/subdir.mk
 -include subdir.mk
 -include objects.mk

@@ -2,12 +2,14 @@
  * symbolsTabletester.h
  *
  *  Tests basic functionality of symbolsTable
+ *
  */
 
 #ifndef SYMBOLSTABLETESTER_H_
 #define SYMBOLSTABLETESTER_H_
 
 #define TEST_MAX_SIZE 100 /* Maximum amount of symbols to test */
+#define STRING_TEST_SIZE 31 /* Strings test legnth */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

@@ -71,10 +71,10 @@ int linked_list_set(LinkedList * ls, char * key, void * data, size_t data_size) 
 	debug_print("Setting key %s:",key);
 	exists_data = linked_list_get(ls,key);
 	if (exists_data) {
-		debug_print("Key %s already exists in the list, seeting it to new value.");
+		debug_print("Key %s already exists in the list, seeting it to new value.", key);
 		memcpy(exists_data, data, data_size);
 	} else {
-		debug_print("Key %s does not exists. Allocating memory for a new node.");
+		debug_print("Key %s does not exists. Allocating memory for a new node.", key);
 
 
 		new_node = (Node *) malloc(sizeof(Node));

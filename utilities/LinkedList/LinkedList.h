@@ -11,6 +11,8 @@
 
 #include <stdlib.h>
 #define KEY_MAX_LENGTH 31
+
+
 /*
  * Because input is not limited in length (might have many collisions in hash map) we need to have a dynamic data structure.
  * Most insertions always happen at the end of an array, so I choose to hold a pointer to that as well.
