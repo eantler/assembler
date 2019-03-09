@@ -8,7 +8,6 @@
 #include "tokenizer.h"
 
 
-
 Sentence * tokenizeLine(char * line) {
 
 	char * tokenStr;
@@ -21,8 +20,11 @@ Sentence * tokenizeLine(char * line) {
 	int tokensCount = 0;
 	int firstTokenIndicator = 0;
 	int i;
-
-
+	char * stringStartPtr;
+	char * parseCharPtr;
+	int stringLength;
+	int integerValue;
+	int errFlag = 0;
 
 	debug_print("Tokenizer read line: \"%s\"", line);
 
@@ -107,6 +109,11 @@ Sentence * tokenizeLine(char * line) {
 		return NULL;
 
 	}
+	returnedSentence->operands = NULL;
+	returnedSentence->operandsCount = 0;
+	returnedSentence->isLabeled = 0;
+	returnedSentence->commandType = 0;
+	returnedSentence->type = 0;
 
 	/* Checking if we have a label */
 
@@ -115,6 +122,7 @@ Sentence * tokenizeLine(char * line) {
 			printf("ERROR: token \"%s\" is invalid!", tokens[0]->string);
 			freeTokens(tokens, tokensCount);
 			free(lineCopy);
+			free(returnedSentence);
 			return NULL;
 		}
 		if (tokensCount<2) {
@@ -123,6 +131,7 @@ Sentence * tokenizeLine(char * line) {
 			printf("ERROR: label \"%s\" proceeds an empty line.\n", tokens[0]->string);
 			freeTokens(tokens, tokensCount);
 			free(lineCopy);
+			free(returnedSentence);
 			return NULL;
 		}
 		returnedSentence->isLabeled = 1;
@@ -131,9 +140,6 @@ Sentence * tokenizeLine(char * line) {
 		firstTokenIndicator = 1;
 	} else {
 		returnedSentence->isLabeled = 0;
-		freeTokens(tokens, tokensCount);
-		free(lineCopy);
-		return NULL;
 	}
 
 	/* figuring out which command is that*/
@@ -142,6 +148,7 @@ Sentence * tokenizeLine(char * line) {
 	if (sentenceTypeInferred == 0) {
 		printf("ERROR: Invalid command type \"%s\".\n",0+tokens[0+firstTokenIndicator]->string);
 		freeTokens(tokens, tokensCount);
+		free(returnedSentence);
 		free(lineCopy);
 		return NULL;
 	}
@@ -155,6 +162,22 @@ Sentence * tokenizeLine(char * line) {
 
 	debug_print("Sentence type %d, command type %d", returnedSentence->type,returnedSentence->commandType);
 
+	/* VERIFYING SEPARATORS */
+		for (i=0+firstTokenIndicator; i < tokensCount-1; i++) {
+			if (!(
+					(tokens[i]->separator == ',' || tokens[i]->separator == '\0')
+					||
+					(tokens[i]->separator == ' ' && i==0+firstTokenIndicator)
+					)) {
+				debug_print("TOKEN [%d] separator is %c, which is invlid. token is: %s",i,tokens[i]->separator, tokens[i]->string);
+				printf("ERROR: invalid separators format\n");
+				freeTokens(tokens, tokensCount);
+				free(lineCopy);
+				free(returnedSentence);
+				return NULL;
+			}
+		}
+
 	/**
 	 *  HANDLING TOKENS BY COMMAND
 	 */
@@ -167,11 +190,13 @@ Sentence * tokenizeLine(char * line) {
 				printf("ERROR: Too many tokens command.\n");
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 			}
 			if (!(isValidLabel(tokens[firstTokenIndicator+1]->string))) {
 				printf("ERROR: string \"%s\" is not a valid label.\n",tokens[firstTokenIndicator+1]->string);
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 				return NULL;
 			}
 
@@ -181,6 +206,7 @@ Sentence * tokenizeLine(char * line) {
 				printf("Memory allocation failed while tokenizing\n");
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 				return NULL;
 			}
 			returnedSentence->operands[0] = (Operand *) malloc(sizeof(Operand));
@@ -188,6 +214,7 @@ Sentence * tokenizeLine(char * line) {
 				printf("Memory allocation failed while tokenizing\n");
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 				return NULL;
 			}
 			returnedSentence->operands[0]->type = label;
@@ -196,38 +223,240 @@ Sentence * tokenizeLine(char * line) {
 				printf("Memory allocation failed while tokenizing\n");
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 				return NULL;
 			}
 			strcpy(returnedSentence->operands[0]->label,tokens[firstTokenIndicator+1]->string);
 			break;
 
+
+
+
+
 		case STRING:
-			if (!isValidString(lineCopy,tokens[firstTokenIndicator+1]->startOffset,tokens[tokensCount]->endOffset)) {
-				printf("Error: String is invalid. Remember to escape \" using \\ and only have one string in one line.\n");
+			if (!isValidString(lineCopy,tokens[firstTokenIndicator+1]->startOffset,tokens[tokensCount-1]->endOffset)) {
+				printf("Error: String is invalid. Remember I do not support escaping '\"'.\n");
 				freeTokens(tokens, tokensCount);
 				free(lineCopy);
+				free(returnedSentence);
 				return NULL;
 			}
 
-			  debug_print("GOT STRING: \"(%.*s)\"", tokens[tokensCount]->endOffset - tokens[firstTokenIndicator+1]->startOffset, tokens[firstTokenIndicator+1]->startOffset);
 
+
+			stringStartPtr = lineCopy+tokens[firstTokenIndicator+1]->startOffset+1;
+			stringLength = tokens[tokensCount-1]->endOffset - tokens[firstTokenIndicator+1]->startOffset-2;
+
+			returnedSentence->operandsCount = stringLength;
+			returnedSentence->operands = (Operand **) malloc(sizeof(Operand *)*(stringLength+1));
+			if (returnedSentence->operands == NULL) {
+				printf("Memory allocation failed while tokenizing\n");
+				freeTokens(tokens, tokensCount);
+				free(lineCopy);
+				free(returnedSentence);
+				return NULL;
+			}
+
+			for (i = 0; i < stringLength; i++) {
+				returnedSentence->operands[i] = (Operand *) malloc(sizeof(Operand));
+				if (returnedSentence->operands[i] == NULL) {
+					if (returnedSentence->operands[i] == NULL) {
+						printf("Memory allocation failed while tokenizing\n");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+				}
+
+				returnedSentence->operands[i]->type = character;
+				returnedSentence->operands[i]->character = *(stringStartPtr+i);
+			}
+
+			returnedSentence->operands[stringLength] = (Operand *) malloc(sizeof(Operand));
+			if (returnedSentence->operands[stringLength] == NULL) {
+				printf("Memory allocation failed while tokenizing\n");
+				freeTokens(tokens, tokensCount);
+				free(lineCopy);
+				free(returnedSentence);
+				return NULL;
+			}
+			returnedSentence->operands[stringLength]->type = character;
+			returnedSentence->operands[stringLength]->character = '\0';
+
+			break;
+
+
+
+
+
+
+		case DATA:
+				/* allocate space needed for array*/
+
+				returnedSentence->operandsCount = tokensCount-firstTokenIndicator-1;
+				returnedSentence->operands = (Operand **) malloc(sizeof(Operand*)*returnedSentence->operandsCount+1);
+				if (returnedSentence->operands == NULL) {
+					printf("Memory allocation failed while tokenizing\n");
+					freeTokens(tokens, tokensCount);
+
+					free(returnedSentence);
+					return NULL;
+				}
+
+				/* allocating space needed for operands */
+				 for (i=0; i<returnedSentence->operandsCount; i++) {
+					 returnedSentence->operands[i] = (Operand *) malloc(sizeof(Operand));
+					if (returnedSentence->operands[i] == NULL) {
+						printf("Memory allocation failed while tokenizing\n");
+						freeTokens(tokens, tokensCount);
+						free(returnedSentence);
+						return NULL;
+					}
+				 }
+
+				/* adding operands as we go */
+				for (i=firstTokenIndicator+1;i<tokensCount; i++) {
+					debug_print("Tring to parse %s",tokens[i]->string);
+					errno = 0;
+					parseCharPtr=0;
+					integerValue = (int) strtol(tokens[i]->string, &parseCharPtr, 10);
+					if (parseCharPtr != (tokens[i]->string+strlen(tokens[i]->string))) {
+						errno = ENOEXEC;
+					}
+
+					if (errno != 0) {
+						printf("Error while trying to parse \"%s\" as integer: %s.\n", tokens[i]->string,strerror(errno));
+						freeTokens(tokens, tokensCount);
+						freeOperands(returnedSentence->operands, returnedSentence->operandsCount);
+						/*
+						free(returnedSentence); */
+						return NULL;
+					}
+
+					debug_print("Parsed first number: %d", integerValue);
+					returnedSentence->operands[i]->type = constant;
+					returnedSentence->operands[i]->value = integerValue;
+					debug_print("GOT HERE");
+				}
+			break;
+
+
+
+
+
+		case COMMAND:
+			if (returnedSentence->commandType==0) {
+				printf("ERROR: Invalid command type. Command type is unknown while command is the type.\n");
+				break;
+			}
+				errFlag = 0;
+
+				if (returnedSentence->commandType >=1 && returnedSentence->commandType<=5) {
+					/* first type of commands group */
+
+					if (tokensCount-firstTokenIndicator-1 != 2) {
+						printf("Command type %d requires exactly two operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
+						printf("Something went wrong while parsing command.\n");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+
+					returnedSentence->operandsCount=2;
+					returnedSentence->operands = (Operand **) malloc(sizeof(Operand *)*2);
+					if (returnedSentence->operands == NULL) {
+						printf("Couldn't allocate memory while parsing command.\n");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+
+					returnedSentence->operands[0] = createOperandFromToken(tokens[firstTokenIndicator+1]->string);
+					returnedSentence->operands[1] = createOperandFromToken(tokens[firstTokenIndicator+2]->string);
+					if (returnedSentence->operands[0] == NULL || returnedSentence->operands[1] == NULL ) {
+						errFlag = 1;
+					}
+
+				} else if (returnedSentence->commandType >=6 && returnedSentence->commandType <=14) {
+					/* second type of command group */
+
+					if (tokensCount-firstTokenIndicator-1 != 1) {
+						printf("Command type %d requires exactly one operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
+						printf("Something went wrong while parsing command.\n");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+
+					returnedSentence->operandsCount=1;
+					returnedSentence->operands = (Operand **) malloc(sizeof(Operand *));
+					if (returnedSentence->operands == NULL) {
+						printf("Couldn't allocate memory while parsing command.\n");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+
+					returnedSentence->operands[0] = createOperandFromToken(tokens[firstTokenIndicator+1]->string);
+					if (returnedSentence->operands[0] == NULL) {
+						errFlag = 1;
+					}
+
+
+				} else if (returnedSentence->commandType >=15 && returnedSentence->commandType <=16) {
+					/* third group of commands group */
+
+					if (tokensCount-firstTokenIndicator-1 != 0) {
+						printf("Command type %d requires cannot accepts operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
+						printf("Something went wrong while parsing command.\n");
+						debug_print("GOT HERE5");
+						freeTokens(tokens, tokensCount);
+						free(lineCopy);
+						free(returnedSentence);
+						return NULL;
+					}
+					returnedSentence->operandsCount=0;
+				}
+				if (errFlag) {
+					printf("Something went wrong while parsing command.\n");
+					freeTokens(tokens, tokensCount);
+					free(lineCopy);
+					free(returnedSentence);
+					return NULL;
+
+				}
 			break;
 		default:
 			printf("Something went terribly wrong, returnedSentence Type can't be handled\n");
 			freeTokens(tokens, tokensCount);
 			free(lineCopy);
+			free(returnedSentence);
 			return NULL;
 	}
-	/*enum SentenceType {unknownSentence, EMPTY,COMMAND,DATA,STRING,ENTRY*,EXTERNAL*};
-	enum CommandType {unknownCommand, mov,cmp,add,sub,not,clr,lea,inc,dec,jmp,bne,red,prn,jsr,rts,stop};
-	*/
+
 
 	freeTokens(tokens, tokensCount);
 	free(lineCopy);
+	debug_print_sentence(returnedSentence);
 	return returnedSentence;
 }
 
-void destorySentence(Sentence * sentance) {
+void destorySentence(Sentence * sentence) {
+	int i;
+	for (i = 0; i < sentence->operandsCount;i++) {
+		if(sentence->operands[i]->type == label) {
+			free(sentence->operands[i]->label);
+		}
+		free(sentence->operands[i]);
+	}
+	if (sentence->operandsCount>0) free(sentence->operands);
+	if (sentence->isLabeled) free(sentence->label);
+	free(sentence);
 	return;
 }
 

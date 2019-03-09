@@ -13,6 +13,9 @@
 #include "../utilities/utils.h"
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 /* Restrictions */
 #define MAX_LINE_SIZE 80
@@ -20,6 +23,8 @@
 #define DELIMS " :,\r\t\n"
 #define MAX_TOKENS_PER_LINE 100
 #define MAX_TOKEN_SIZE 80
+#define NUM_OF_REGISTERES 8 /* max 10 supported */
+
 /*Operand structure represents an operand in the command */
 enum OperandType {registerNumber, label, constant, character};
 
@@ -34,6 +39,7 @@ typedef struct {
 	enum OperandType type;
 	char * label;
 	int value;
+	char character;
 } Operand;
 
 /*
@@ -42,7 +48,7 @@ typedef struct {
  *
  */
 enum SentenceType {unknownSentence, EMPTY,COMMAND,DATA,STRING,ENTRY,EXTERNAL};
-enum CommandType {unknownCommand, mov,cmp,add,sub,not,clr,lea,inc,dec,jmp,bne,red,prn,jsr,rts,stop};
+enum CommandType {unknownCommand, mov,cmp,add,sub,lea,not,clr,inc,dec,jmp,bne,red,prn,jsr,rts,stop};
 
 typedef struct {
 	enum SentenceType type;
@@ -86,6 +92,7 @@ char getSeparator(char * string, int startOffSet, int endOffSet);
 
 /* helping function that frees a list of tokens */
 void freeTokens(Token ** list, int length);
+void freeOperands(Operand ** list, int length);
 
 /* helping function that returns sentence type from token */
 enum SentenceType inferSentenceTypeFromToken(char * token);
@@ -93,10 +100,16 @@ enum SentenceType inferSentenceTypeFromToken(char * token);
 /* helping function that returns command type from token */
 enum CommandType inferCommandTypeFromToken(char * token);
 
+/* helping function that returns a new operand from a token */
+Operand * createOperandFromToken(char * token);
+
 /* helping function that checks if a token is a valid label */
 int isValidLabel(char * token);
 
 /* helping function that checks if we look at valid strings */
 int isValidString(char * line, int start, int end);
+
+/* helping function to print a sentence */
+void debug_print_sentence(Sentence * sen);
 
 #endif /* TOKENIZER_H_ */
