@@ -24,6 +24,7 @@ Sentence * tokenizeLine(char * line) {
 	char * parseCharPtr;
 	int stringLength;
 	int integerValue;
+	int tokensIndex;
 	int errFlag = 0;
 
 	debug_print("Tokenizer read line: \"%s\"", line);
@@ -316,17 +317,18 @@ Sentence * tokenizeLine(char * line) {
 				 }
 
 				/* adding operands as we go */
-				for (i=firstTokenIndicator+1;i<tokensCount; i++) {
-					debug_print("Tring to parse %s",tokens[i]->string);
+				for (i=0;i<returnedSentence->operandsCount; i++) {
+					tokensIndex = i+firstTokenIndicator+1;
+					debug_print("Tring to parse %s",tokens[tokensIndex]->string);
 					errno = 0;
 					parseCharPtr=0;
-					integerValue = (int) strtol(tokens[i]->string, &parseCharPtr, 10);
-					if (parseCharPtr != (tokens[i]->string+strlen(tokens[i]->string))) {
+					integerValue = (int) strtol(tokens[tokensIndex]->string, &parseCharPtr, 10);
+					if (parseCharPtr != (tokens[tokensIndex]->string+strlen(tokens[tokensIndex]->string))) {
 						errno = ENOEXEC;
 					}
 
 					if (errno != 0) {
-						printf("Error while trying to parse \"%s\" as integer: %s.\n", tokens[i]->string,strerror(errno));
+						printf("Error while trying to parse \"%s\" as integer: %s.\n", tokens[tokensIndex]->string,strerror(errno));
 						freeTokens(tokens, tokensCount);
 						freeOperands(returnedSentence->operands, returnedSentence->operandsCount);
 						/*
@@ -335,9 +337,10 @@ Sentence * tokenizeLine(char * line) {
 					}
 
 					debug_print("Parsed first number: %d", integerValue);
+					debug_print("Setting returned operand %d to type %d of value %d",i,constant,integerValue);
 					returnedSentence->operands[i]->type = constant;
 					returnedSentence->operands[i]->value = integerValue;
-					debug_print("GOT HERE");
+
 				}
 			break;
 
@@ -414,7 +417,7 @@ Sentence * tokenizeLine(char * line) {
 					if (tokensCount-firstTokenIndicator-1 != 0) {
 						printf("Command type %d requires cannot accepts operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
 						printf("Something went wrong while parsing command.\n");
-						debug_print("GOT HERE5");
+
 						freeTokens(tokens, tokensCount);
 						free(lineCopy);
 						free(returnedSentence);
