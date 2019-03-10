@@ -18,6 +18,7 @@ typedef struct Symbol {
 	int value;
 	int isExtern; /* =1 if true */
 	int isEntry; /* =1 if true */
+	int isData; /* =1 if true */
 } Symbol;
 
 
@@ -26,6 +27,7 @@ typedef struct SymbolTable {
 	int length;
 	int lengthExternals;
 	int lengthEntries;
+	int lengthData;
 } SymbolTable;
 
 
@@ -64,7 +66,7 @@ void destroy_symbols_table(SymbolTable * st);
  * pointer to symbol if successful else NULL
  *
  */
-Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern);
+Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern, int isData);
 
 /*
  * Symbol * symbols_table_get_symbol(SymbolTable * st, char * label)
@@ -95,7 +97,7 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label);
  * count of number of symbols in array, if allocation error than -1
  */
 
-int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnly, int externalsOnly);
+int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnly, int externalsOnly, int dataOnly);
 
 
 #endif /* SYMBOLSTABLE_H_ */

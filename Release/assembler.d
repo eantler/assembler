@@ -8,7 +8,10 @@ assembler.d: ../assembler.c ../assembler.h ../utilities/utils.h \
  ../symbolsTable/symbolsTableTester.h ../symbolsTable/symbolsTable.h \
  ../symbolsTable/../utilities/utils.h \
  ../symbolsTable/../utilities/StringHashTable/StringHashTable.h \
- ../tokenizer/tokenizer.h ../tokenizer/../utilities/utils.h
+ ../tokenizer/tokenizer.h ../tokenizer/../utilities/utils.h \
+ ../fileAssembler/fileAssembler.h ../fileAssembler/../utilities/utils.h \
+ ../fileAssembler/../symbolsTable/symbolsTable.h \
+ ../fileAssembler/../tokenizer/tokenizer.h
 
 ../assembler.h:
 
@@ -39,3 +42,11 @@ assembler.d: ../assembler.c ../assembler.h ../utilities/utils.h \
 ../tokenizer/tokenizer.h:
 
 ../tokenizer/../utilities/utils.h:
+
+../fileAssembler/fileAssembler.h:
+
+../fileAssembler/../utilities/utils.h:
+
+../fileAssembler/../symbolsTable/symbolsTable.h:
+
+../fileAssembler/../tokenizer/tokenizer.h:

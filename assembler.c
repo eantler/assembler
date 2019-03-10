@@ -17,10 +17,13 @@ typedef struct {
 	int b;
 } Test;
 
-int main() {
+int main(int argc, char ** argv) {
+	FILE * fp;
+	char cwd[1024];
+	char path[1024];
+	char * fileName = "test";
+	int i;
 
-	printf("Hello world!\n");
-	debug_print("DONEEEE#@(&$#HKJLHFD");
 	if (TEST) {
 		info_print("***************** Starting testing ***********");
 		linked_list_test();
@@ -28,6 +31,53 @@ int main() {
 		/*symbols_table_test();*/
 		info_print("***************** End testing ***********");
 	}
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL) {
+		printf("ERROR: failed at getting current work directory");
+	};
+
+
+	if (argc==1 && TEST) {
+
+
+
+	strcpy(path,cwd);
+	strcat(path,"/");
+	strcat(path,fileName);
+	strcat(path,".as");
+
+	fp = fopen(path, "r");
+	if (fp == NULL) {
+		printf("ERROR: failed to open file \"%s\": %s\n",path,strerror(errno));
+	}
+		assembleFile(fp, path);
+
+	fclose(fp);
+
+	}
+
+	for (i=1; i< argc; i++) {
+		strcpy(path,cwd);
+		strcat(path,"/");
+		strcat(path,argv[i]);
+		strcat(path,".as");
+
+		fp = fopen(path, "r");
+		if (fp == NULL) {
+			printf("ERROR: failed to open file \"%s\": %s\n",path,strerror(errno));
+		} else {
+			assembleFile(fp, path);
+
+			fclose(fp);
+		}
+
+	}
+
+
+
+
+
+	/*
 	int i;
 	char testText[] = "  	test: 			   			.data 1,2,3,-677,78,143,12,5666,342,1235343,2\n";
 	char emptyText[] = "	not C	 \n";
@@ -43,5 +93,6 @@ int main() {
 	for (i = 0; i<2; i++)
 	info_print("Test string = %s and int = %d",test[i].a,test[i].b);
 	return 1;
-
+	*/
+	return 0;
 }

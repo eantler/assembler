@@ -18,5 +18,6 @@ utilities/StringHashTable \
 utilities/LinkedList \
 tokenizer \
 symbolsTable \
+fileAssembler \
 . \
 

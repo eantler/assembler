@@ -14,5 +14,7 @@
  #include "utilities/StringHashTable/stringHashTableTester.h"
  #include "symbolsTable/symbolsTableTester.h"
  #include "tokenizer/tokenizer.h"
+ #include "fileAssembler/fileAssembler.h"
+ #include <unistd.h>
 
 #endif /* ASSEMBLER_H_ */

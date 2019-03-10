@@ -21,6 +21,7 @@ SymbolTable * create_symbols_table() {
 	returnedTable->length = 0;
 	returnedTable->lengthEntries = 0;
 	returnedTable->lengthExternals = 0;
+	returnedTable->lengthData = 0;
 
 	returnedTable->hashTable = create_string_hash_table();
 
@@ -42,13 +43,18 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label){
 };
 
 
-Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern){
+Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern, int isData){
 	Symbol * existingSymbol;
 	Symbol newSymbol;
 	int setResult;
 
 	if (isEntry > 1 || isEntry < -1) {
 		debug_print("Error: isEntry of invalid value for symbol %s", label);
+		return NULL;
+	}
+
+	if (isData > 1 || isData < -1) {
+		debug_print("Error: isData of invalid value for symbol %s", label);
 		return NULL;
 	}
 
@@ -66,12 +72,15 @@ Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int
 		existingSymbol->value = value == -1 ? existingSymbol->value : value;
 		existingSymbol->isEntry = isEntry == -1 ? existingSymbol->isEntry : isEntry;
 		existingSymbol->isExtern = isExtern == -1 ? existingSymbol->isExtern : isExtern;
-		if (existingSymbol->isEntry==1 && isEntry==1) st->lengthEntries++;
-		if (existingSymbol->isExtern==1 && isExtern==1) st->lengthExternals++;
+		existingSymbol->isData = isData == -1 ? existingSymbol->isData : isData;
+		if (existingSymbol->isEntry==0 && isEntry==1) st->lengthEntries++;
+		if (existingSymbol->isExtern==0 && isExtern==1) st->lengthExternals++;
+		if (existingSymbol->isData==0 && isData==1) st->lengthData++;
 		return existingSymbol;
 	} else {
 		newSymbol.isEntry = isEntry == -1 ? 0 : isEntry;
 		newSymbol.isExtern = isExtern == -1 ? 0 : isExtern;
+		newSymbol.isData = isData == -1 ? 0 : isData;
 		newSymbol.value = value == -1 ? 0 : value;
 		newSymbol.label = label;
 
@@ -81,6 +90,7 @@ Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int
 			st->length++;
 			if (isEntry==1) st->lengthEntries++;
 			if (isExtern==1) st->lengthExternals++;
+			if (isData==1) st->lengthData++;
 			return string_hash_table_get(st->hashTable,label);
 		}
 	}
@@ -102,7 +112,7 @@ Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int
  * @return
  * count of number of symbols in array, if allocation error than -1
  */
-int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnly, int externalsOnly ) {
+int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnly, int externalsOnly, int dataOnly ) {
 	Symbol ** newArray;
 	Symbol * tempSymbol;
 	char ** keysArray;
@@ -117,6 +127,8 @@ int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnl
 		allocationLength = st->lengthEntries;
 	} else if (externalsOnly == 1) {
 		allocationLength = st->lengthExternals;
+	} else if (dataOnly == 1) {
+		allocationLength = st->lengthData;
 	} else {
 		allocationLength = st->length;
 	}
@@ -160,8 +172,22 @@ int symbols_table_get_symbols(SymbolTable * st, Symbol *** array, int entriesOnl
 				}
 			}
 		}
+
 		if (externalsOnly) {
 			while (tempSymbol->isExtern != 1) {
+				externalIndex++;
+				tempSymbol = (Symbol *) string_hash_table_get(st->hashTable,keysArray[externalIndex]);
+				if (tempSymbol == NULL) {
+					debug_print("Something went wrong while trying to read key: %s",keysArray[i]);
+					free(newArray);
+					free(keysArray);
+					return -1;
+				}
+			}
+		}
+
+		if (dataOnly) {
+			while (tempSymbol->isData != 1) {
 				externalIndex++;
 				tempSymbol = (Symbol *) string_hash_table_get(st->hashTable,keysArray[externalIndex]);
 				if (tempSymbol == NULL) {

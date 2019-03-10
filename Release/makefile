@@ -13,6 +13,7 @@ RM := rm -rf
 -include utilities/subdir.mk
 -include tokenizer/subdir.mk
 -include symbolsTable/subdir.mk
+-include fileAssembler/subdir.mk
 -include subdir.mk
 -include objects.mk
 

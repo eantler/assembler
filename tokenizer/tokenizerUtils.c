@@ -264,7 +264,7 @@ Operand * createOperandFromToken(char * token) {
 		return returnedOperand;
 	}
 
-	printf("ERROR: couldn't resolve \"%s\" into a valid operand.",token);
+	printf("ERROR: couldn't resolve \"%s\" into a valid operand.\n",token);
 	free(returnedOperand);
 	return NULL;
 }

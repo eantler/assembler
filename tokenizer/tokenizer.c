@@ -359,8 +359,7 @@ Sentence * tokenizeLine(char * line) {
 					/* first type of commands group */
 
 					if (tokensCount-firstTokenIndicator-1 != 2) {
-						printf("Command type %d requires exactly two operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
-						printf("Something went wrong while parsing command.\n");
+						printf("ERROR: Command type %d requires exactly two operands, %d were given.\n",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
 						freeTokens(tokens, tokensCount);
 						free(lineCopy);
 						free(returnedSentence);
@@ -387,8 +386,7 @@ Sentence * tokenizeLine(char * line) {
 					/* second type of command group */
 
 					if (tokensCount-firstTokenIndicator-1 != 1) {
-						printf("Command type %d requires exactly one operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
-						printf("Something went wrong while parsing command.\n");
+						printf("ERROR: Command type %d requires exactly one operands, %d were given.\n",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
 						freeTokens(tokens, tokensCount);
 						free(lineCopy);
 						free(returnedSentence);
@@ -398,7 +396,7 @@ Sentence * tokenizeLine(char * line) {
 					returnedSentence->operandsCount=1;
 					returnedSentence->operands = (Operand **) malloc(sizeof(Operand *));
 					if (returnedSentence->operands == NULL) {
-						printf("Couldn't allocate memory while parsing command.\n");
+						printf("ERROR :Couldn't allocate memory while parsing command.\n");
 						freeTokens(tokens, tokensCount);
 						free(lineCopy);
 						free(returnedSentence);
@@ -415,9 +413,7 @@ Sentence * tokenizeLine(char * line) {
 					/* third group of commands group */
 
 					if (tokensCount-firstTokenIndicator-1 != 0) {
-						printf("Command type %d requires cannot accepts operands, %d were given.",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
-						printf("Something went wrong while parsing command.\n");
-
+						printf("ERROR: Command type %d requires cannot accepts operands, %d were given.\n",returnedSentence->commandType,tokensCount-firstTokenIndicator-1);
 						freeTokens(tokens, tokensCount);
 						free(lineCopy);
 						free(returnedSentence);
@@ -426,7 +422,6 @@ Sentence * tokenizeLine(char * line) {
 					returnedSentence->operandsCount=0;
 				}
 				if (errFlag) {
-					printf("Something went wrong while parsing command.\n");
 					freeTokens(tokens, tokensCount);
 					free(lineCopy);
 					free(returnedSentence);

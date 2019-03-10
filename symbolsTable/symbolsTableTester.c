@@ -51,7 +51,7 @@ int symbols_table_test() {
 
 	for (i=0; i<TEST_MAX_SIZE; i++) {
 		debug_print("Inserting symbol \"%s\" into the table.", labels[i]);
-		symbols_table_set_symbol(testSymbolTable,labels[i],values[i],isEntries[i],isExternals[i]);
+		symbols_table_set_symbol(testSymbolTable,labels[i],values[i],isEntries[i],isExternals[i], 0);
 		debug_print("Getting symbol \"%s\" from the table.", labels[i]);
 		symbolTemp = symbols_table_get_symbol(testSymbolTable,labels[i]);
 		if (!(
@@ -70,7 +70,7 @@ int symbols_table_test() {
 	}
 
 	info_print("Getting back symbols list");
-	returnedSymbolsListLength = symbols_table_get_symbols(testSymbolTable, &symbolsList ,0,0);
+	returnedSymbolsListLength = symbols_table_get_symbols(testSymbolTable, &symbolsList ,0,0, 0);
 	if (returnedSymbolsListLength != TEST_MAX_SIZE) {
 		debug_print("ERROR: Didn't get enough symbols back");
 		return 0;
@@ -103,7 +103,7 @@ int symbols_table_test() {
 
 
 	info_print("Testing for only externals");
-	returnedSymbolsListLength = symbols_table_get_symbols(testSymbolTable, &symbolsList ,0,1);
+	returnedSymbolsListLength = symbols_table_get_symbols(testSymbolTable, &symbolsList ,0,1, 0);
 	if (returnedSymbolsListLength != externalsCount) {
 		debug_print("ERROR: Didn't get enough symbols back");
 		return 0;
