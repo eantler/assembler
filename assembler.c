@@ -74,25 +74,5 @@ int main(int argc, char ** argv) {
 	}
 
 
-
-
-
-	/*
-	int i;
-	char testText[] = "  	test: 			   			.data 1,2,3,-677,78,143,12,5666,342,1235343,2\n";
-	char emptyText[] = "	not C	 \n";
-	Sentence * s;
-	s = tokenizeLine(testText);
-	if (s != NULL) debug_print("s type: %d,",s->type);
-			else debug_print("s is null");
-
-	s = tokenizeLine(emptyText);
-		if (s != NULL) debug_print("s type: %d,",s->type);
-				else debug_print("s is null");
-	Test test[] = {{"hello",3},{"hey",2}};
-	for (i = 0; i<2; i++)
-	info_print("Test string = %s and int = %d",test[i].a,test[i].b);
-	return 1;
-	*/
 	return 0;
 }

@@ -4,12 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../fileAssembler/encoder.c \
 ../fileAssembler/fileAssembler.c 
 
 OBJS += \
+./fileAssembler/encoder.o \
 ./fileAssembler/fileAssembler.o 
 
 C_DEPS += \
+./fileAssembler/encoder.d \
 ./fileAssembler/fileAssembler.d 
 
 

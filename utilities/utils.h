@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#define DEBUG 0
-#define TEST 0
+#define DEBUG 1
+#define TEST 1
 
 /*
  * debug_print(const char* format, ...)

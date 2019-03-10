@@ -105,10 +105,11 @@ enum CommandType inferCommandTypeFromToken(char * token) {
  * if more than 1 separator then throws an error and return '\0'
  */
 char getSeparator(char * string, int startOffSet, int endOffSet) {
-	debug_print("getSeparator called with string \"%s\" startOffSet = %d and endOffSet = %d",string,startOffSet,endOffSet);
+
 	char * pointer;
 	char separator = ' ';
 	pointer  = string + startOffSet;
+	debug_print("getSeparator called with string \"%s\" startOffSet = %d and endOffSet = %d",string,startOffSet,endOffSet);
 	while (pointer < string+endOffSet && *pointer != '\0') {
 		if (*pointer == ' ' || *pointer == '\r' || *pointer== '\t' ) {
 			pointer++; /* skip blanks */

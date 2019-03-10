@@ -11,6 +11,7 @@
 #include "../symbolsTable/symbolsTable.h"
 #include "../tokenizer/tokenizer.h"
 
+
 #ifndef FILEASSEMBLER_FILEASSEMBLER_H_
 
 #define START_CODE_ROW 100
@@ -43,7 +44,10 @@ void print_binary_word_to_file (FILE * f, unsigned int * word);
 /* returns the miun type based on operand */
 int inferMiunFromOperand (Operand o);
 
-
+/*encoder*/
+unsigned char * base64_encode(const unsigned char *src, size_t len,
+			      size_t *out_len);
+size_t b64_encoded_size(size_t inlen);
 
 #define FILEASSEMBLER_FILEASSEMBLER_H_
 

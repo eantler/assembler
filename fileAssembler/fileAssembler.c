@@ -568,14 +568,21 @@ void debug_binary_print(unsigned int word){
 }
 
 void print_binary_word_to_file (FILE * f, unsigned int * word) {
-	int i;
+	static const unsigned char base64_table[65] =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	unsigned int firstLetter;
+	unsigned int secondLetter;
 
-	if (DEBUG) {
-		for (i = 0; i < 12; i++) {
-			fprintf(f,"%d", !!((*word << i ) & 0x800));
-		}
-		fprintf(f,"\n");
-	}
+	firstLetter = 0;
+	secondLetter = 0;
+	firstLetter |= (*word & 0x3F);
+	secondLetter |= (*word & 0xFC0) >> 6;
+	fprintf(f,"%c",base64_table[secondLetter]);
+	fprintf(f,"%c",base64_table[firstLetter]);
+	fprintf(f,"\n");
+	debug_binary_print(*word);
 	return;
 }
+
+
 

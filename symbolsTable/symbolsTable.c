@@ -9,8 +9,9 @@
 #include "symbolsTable.h"
 
 SymbolTable * create_symbols_table() {
-	debug_print("Starting to create a symbols table");
+
 	SymbolTable * returnedTable;
+	debug_print("Starting to create a symbols table");
 	returnedTable = (SymbolTable *) malloc(sizeof(SymbolTable));
 	if (!returnedTable) {
 		/* allocation failed */
@@ -40,7 +41,7 @@ Symbol * symbols_table_get_symbol(SymbolTable * st, char * label){
 	if (existingSymbol) return  existingSymbol;
 
 	return NULL;
-};
+}
 
 
 Symbol * symbols_table_set_symbol(SymbolTable * st, char * label, int value, int isEntry, int isExtern, int isData){
